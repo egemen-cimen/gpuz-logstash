@@ -1,0 +1,15 @@
+services:
+  logstash:
+    image: docker.elastic.co/logstash/logstash:9.0.3
+    container_name: logstash
+    environment:
+      - LS_JAVA_OPTS=-Xms512m -Xmx512m
+      - 'allow_superuser=true'
+      - 'xpack.monitoring.allow_legacy_collection=true'
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - /mnt/c/temp/gpuz.txt:/gpuz_logs:ro
+    ports:
+      - 5044:5044
+      - 9600:9600
+    restart: always
