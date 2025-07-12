@@ -6,6 +6,7 @@ services:
       - LS_JAVA_OPTS=-Xms512m -Xmx512m
       - "allow_superuser=true"
       - "xpack.monitoring.allow_legacy_collection=true"
+      - SYSTEM_NAME=Magpie
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
       - /mnt/c/temp/gpuz.txt:/gpuz_logs:ro
