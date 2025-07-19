@@ -7,7 +7,7 @@ services:
       - "allow_superuser=true"
       - "xpack.monitoring.allow_legacy_collection=true"
       - SYSTEM_NAME=Magpie
-      - ES_HOST=http://192.168.56.102
+      - ES_HOST=http://192.168.0.101
       - ES_PORT=9200
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
