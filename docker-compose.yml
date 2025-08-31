@@ -11,8 +11,8 @@ services:
       - ES_PORT=9200
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
-      - /mnt/c/temp/gpuz.txt:/gpuz_logs:ro
-      - /mnt/c/temp/sincedb:/sincedb
+      - ./gpuz.txt:/gpuz_logs:ro
+      - ./sincedb:/sincedb
     ports:
       - 5044:5044
       - 9600:9600
