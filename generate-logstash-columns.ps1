@@ -1,5 +1,5 @@
 
-# Usage: .\generate-logstash-columns.ps1 -CsvPath "gpu-z-log.csv" -ConfPath "logstash.conf"
+# Usage: .\generate-logstash-columns.ps1 -CsvPath "gpu-z-log.csv" -ConfPath "example-logstash.conf"
 
 param(
     [Parameter(Mandatory = $true)]
@@ -99,12 +99,13 @@ Write-Host "columns => [`r`n    $columnsArray`r`n]"
 Write-Output "`r`nInferred convert map:"
 $convertMap.GetEnumerator() | Sort-Object Name | ForEach-Object { Write-Output "$($_.Key) => $($_.Value)" }
 
-# Update logstash.conf in place
+# Write logstash.conf file
 $conf = Get-Content $ConfPath -Raw
+$newConfPath = "logstash.conf"
 $confNew = $conf -replace '(?s)(columns\s*=>\s*\[).*?(\])', "columns => [`r`n    $columnsArray`r`n    ]"
 $confNew = $confNew -replace '(?s)(strip\s*=>\s*\[).*?(\])', "strip => [`r`n    $stripArray`r`n    ]"
 $confNew = $confNew -replace '(?s)(convert\s*=>\s*\{).*?(\})', $convertBlock
 $confNew = $confNew.TrimEnd("`r", "`n")
-Set-Content $ConfPath $confNew
+Set-Content $newConfPath $confNew
 
-Write-Host "`r`nlogstash.conf updated with new columns from CSV."
+Write-Host "`r`nFile ``$newConfPath`` generated with new columns from GPU-Z CSV."
