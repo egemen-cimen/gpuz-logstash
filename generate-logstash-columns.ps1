@@ -55,11 +55,14 @@ function Format-LogstashArray {
     return ($columns | ForEach-Object { '"{0}"' -f $_ }) -join ",`r`n    "
 }
 
-function Format-ConvertBlock {
-    param([hashtable]$convertMap)
-    if ($convertMap.Count -eq 0) { return "" }
-    $block = "convert => {`r`n"
-    foreach ($kv in $convertMap.GetEnumerator() | Sort-Object Name) {
+function Format-LogstashBlock {
+    param(
+        [hashtable]$map,
+        [string]$keyName
+    )
+    if ($map.Count -eq 0) { return "" }
+    $block = "$keyName => {`r`n"
+    foreach ($kv in $map.GetEnumerator() | Sort-Object Name) {
         $block += '      "{0}" => "{1}"' -f $kv.Key, $kv.Value + "`r`n"
     }
     $block += "    }"
@@ -91,7 +94,11 @@ $columns | ForEach-Object { Write-Output $_ }
 # Build Logstash config blocks
 $columnsArray = Format-LogstashArray -columns $columns
 $stripArray = Format-LogstashArray -columns ($columns | Where-Object { $_ -ne 'Extra_Empty_From_CSV' })
-$convertBlock = Format-ConvertBlock -convertMap $convertMap
+$convertBlock = Format-LogstashBlock -map $convertMap -keyName "convert"
+$addFields = @{
+    "system_name" = $env:COMPUTERNAME
+}
+$addFieldBlock = Format-LogstashBlock -map $addFields -keyName "add_field"
 
 Write-Host "`r`nGenerated columns array for Logstash:"
 Write-Host "columns => [`r`n    $columnsArray`r`n]"
@@ -99,12 +106,16 @@ Write-Host "columns => [`r`n    $columnsArray`r`n]"
 Write-Output "`r`nInferred convert map:"
 $convertMap.GetEnumerator() | Sort-Object Name | ForEach-Object { Write-Output "$($_.Key) => $($_.Value)" }
 
+Write-Host "`r`nGenerated add_field block for Logstash:"
+Write-Host $addFieldBlock
+
 # Write logstash.conf file
 $conf = Get-Content $ConfPath -Raw
 $newConfPath = "logstash.conf"
 $confNew = $conf -replace '(?s)(columns\s*=>\s*\[).*?(\])', "columns => [`r`n    $columnsArray`r`n    ]"
 $confNew = $confNew -replace '(?s)(strip\s*=>\s*\[).*?(\])', "strip => [`r`n    $stripArray`r`n    ]"
 $confNew = $confNew -replace '(?s)(convert\s*=>\s*\{).*?(\})', $convertBlock
+$confNew = $confNew -replace '(?s)(add_field\s*=>\s*\{).*?(\})', $addFieldBlock
 $confNew = $confNew.TrimEnd("`r", "`n")
 Set-Content $newConfPath $confNew
 

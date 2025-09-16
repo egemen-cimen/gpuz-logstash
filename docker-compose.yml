@@ -6,7 +6,6 @@ services:
       - LS_JAVA_OPTS=-Xms512m -Xmx512m
       - "allow_superuser=true"
       - "xpack.monitoring.allow_legacy_collection=true"
-      - SYSTEM_NAME=Magpie
       - ES_HOST=192.168.0.101
       - ES_PORT=9200
     volumes:
