@@ -39,7 +39,7 @@ function Convert-ColumnName {
 function Get-ColumnType {
     param([string]$orig)
     # Returns the inferred type for a column based on its original name
-    if ($orig -match '\[MHz\]' -or $orig -match '\[W\]' -or $orig -match '\[V\]' -or $orig -match '\[\u00B0C\]') {
+    if ($orig -match '\[MHz\]' -or $orig -match '\[W\]' -or $orig -match '\[V\]' -or $orig -match '\[\u00B0C\]' -or $orig -match '\[% TDP\]') {
         return "float"
     }
     elseif ($orig -match '\[MB\]' -or $orig -match '\[RPM\]' -or $orig -match '\[%\]') {
