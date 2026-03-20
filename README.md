@@ -11,7 +11,8 @@ This project automates pushing GPU-Z data to ElasticSearch.
     .\generate-logstash-columns.ps1 -CsvPath "gpuz.txt" -ConfPath "example-logstash.conf"
     ```
 
-3. Run `podman compose up -d` (or Docker equivalent) command on Windows
+3. Create a directory named `sincedb` next to the Docker compose file
+4. Run `podman compose up -d` (or Docker equivalent) command on Windows
 
 ## To Update GPU-Z Version
 
